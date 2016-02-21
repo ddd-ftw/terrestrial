@@ -144,7 +144,9 @@ module Terrestrial
       end
 
       def upsert_record(datastore, record)
+        new_id = false
         row_count = 0
+
         unless record.non_identity_attributes.empty?
           row_count = datastore[record.namespace].
             where(record.identity).
@@ -152,10 +154,12 @@ module Terrestrial
         end
 
         if row_count < 1
-          row_count = datastore[record.namespace].insert(record.to_h)
+          new_id = datastore[record.namespace].insert(record.insertable.to_h)
+
+          record.set_auto_id(new_id)
         end
 
-        row_count
+        new_id || row_count
       rescue Object => e
         raise UpsertError.new(record.namespace, record.to_h, e)
       end

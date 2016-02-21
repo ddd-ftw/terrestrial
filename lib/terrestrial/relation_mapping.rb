@@ -37,6 +37,8 @@ module Terrestrial
       raise SerializationError.new(name, serializer, object, e)
     end
 
+    private
+
     def record(attributes, depth, foreign_keys)
       UpsertedRecord.new(
         namespace,
