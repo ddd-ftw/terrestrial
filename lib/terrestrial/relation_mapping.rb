@@ -26,6 +26,8 @@ module Terrestrial
       ]
     end
 
+    private
+
     def record(attributes, depth, foreign_keys)
       UpsertedRecord.new(
         namespace,
