@@ -33,8 +33,12 @@ module Terrestrial
     end
 
     def where(query)
+      new_with_dataset(dataset.where(query))
+    end
+
+    def join(*args, &block)
       new_with_dataset(
-        dataset.where(query)
+        dataset.join(*args, &block).qualify
       )
     end
 
