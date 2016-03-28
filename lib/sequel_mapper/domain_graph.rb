@@ -41,6 +41,14 @@ module SequelMapper
       attr_reader :object, :mapping, :edges
       private :mapping, :edges
 
+      def hash
+        [self.class, object].hash
+      end
+
+      def eql?(other)
+        [self.class, object] == [other.class, other.object]
+      end
+
       def each_edge(&block)
         edges.each(&block)
       end
