@@ -9,7 +9,7 @@ RSpec.describe SequelMapper::DomainGraph do
 
   subject(:transformed_graph) {
     SequelMapper::DomainGraph::Factory.new(mappings)
-      .call(domain_root, domain_root_mapping_name)
+      .call(domain_root_mapping_name, domain_root)
   }
 
   let(:domain_root) { hansel }
@@ -22,6 +22,14 @@ RSpec.describe SequelMapper::DomainGraph do
 
   it "exposes the root domain object via the root vertex" do
     expect(transformed_graph.object).to eq(domain_root)
+  end
+
+  it "exposes the serialized object data" do
+    expect(transformed_graph.data).to match(
+      hash_including(
+        id: "users/1",
+      )
+    )
   end
 
   it "allows shallow traversal of edges" do
@@ -43,8 +51,8 @@ RSpec.describe SequelMapper::DomainGraph do
         let(:domain_object) { double(:domain_object) }
         let(:mapping) { double(:mapping) }
 
-        let(:v1) { SequelMapper::DomainGraph::Vertex.new(domain_object, mapping, []) }
-        let(:v2) { SequelMapper::DomainGraph::Vertex.new(domain_object, mapping, []) }
+        let(:v1) { vertex(domain_object) }
+        let(:v2) { vertex(domain_object) }
         let(:first_value) { double(:first_value) }
         let(:second_value) { double(:second_value) }
 
@@ -57,6 +65,10 @@ RSpec.describe SequelMapper::DomainGraph do
 
           expect(hash_map.fetch(v1)).to eq(second_value)
           expect(hash_map.fetch(v2)).to eq(second_value)
+        end
+
+        def vertex(object)
+          SequelMapper::DomainGraph::Vertex.new(object, mapping, _data={}, _edges=[])
         end
       end
     end

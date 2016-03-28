@@ -8,38 +8,43 @@ module SequelMapper
       attr_reader :mappings
       private :mappings
 
-      def call(object, mapping_name)
+      def call(mapping_name, object)
         mapping = mappings.fetch(mapping_name)
 
-        vertex(object, mapping)
+        vertex(mapping, object)
       end
 
       private
 
-      def vertex(object, mapping)
-        Vertex.new(object, mapping, edges(object, mapping))
+      def vertex(mapping, object)
+        data, association_data = mapping.serialize(object, 0, {})
+
+        Vertex.new(mapping, object, data, edges(mapping, association_data))
       end
 
-      def edges(object, mapping)
-        _data, association_data = mapping.serialize(object, 0, {})
-
+      def edges(mapping, association_data)
         mapping.associations.lazy.flat_map { |name, definition|
           Array(association_data.fetch(name)).map { |associated_object|
-            call(associated_object, definition.mapping_name)
+            call(definition.mapping_name, associated_object)
           }
         }
       end
     end
 
     class Vertex
-      def initialize(object, mapping, edges)
-        @object = object
+      def initialize(mapping, object, data, edges)
         @mapping = mapping
+        @object = object
+        @data = data
         @edges = edges
       end
 
-      attr_reader :object, :mapping, :edges
+      attr_reader :mapping, :object, :edges
       private :mapping, :edges
+
+      def data
+        @data.to_h
+      end
 
       def hash
         [self.class, object].hash
