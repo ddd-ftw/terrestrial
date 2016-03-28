@@ -1,5 +1,5 @@
 module SequelMapper
-  class DomainGraph
+  module DomainGraph
     class Factory
       def initialize(mappings)
         @mappings = mappings
