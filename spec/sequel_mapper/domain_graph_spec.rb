@@ -32,15 +32,15 @@ RSpec.describe SequelMapper::DomainGraph do
     )
   end
 
-  it "allows shallow traversal of edges" do
+  it "allows shallow traversal of vertices" do
     expect(
-      transformed_graph.each_edge.map(&:object).to_a
+      transformed_graph.each_vertex.map(&:object).to_a
     ).to eq(first_level_domain_objects)
   end
 
-  it "allows deep traversal of edges" do
+  it "allows deep traversal of vertices" do
     expect(
-      transformed_graph.each_edge.flat_map(&:each_edge).map(&:object)
+      transformed_graph.each_vertex.flat_map(&:each_vertex).map(&:object)
     ).to match_array(second_level_domain_objects)
   end
 

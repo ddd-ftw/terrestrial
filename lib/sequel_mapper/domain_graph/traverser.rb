@@ -22,7 +22,7 @@ module SequelMapper
 
         visited_verticies.add(vertex)
 
-        [vertex] + vertex.each_edge.flat_map { |other_vertex|
+        [vertex] + vertex.each_vertex.flat_map { |other_vertex|
           get_vertices(other_vertex)
         }.to_a
       end

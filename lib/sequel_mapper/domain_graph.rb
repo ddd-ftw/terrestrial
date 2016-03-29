@@ -25,10 +25,22 @@ module SequelMapper
       def edges(mapping, association_data)
         mapping.associations.lazy.flat_map { |name, definition|
           Array(association_data.fetch(name)).map { |associated_object|
-            call(definition.mapping_name, associated_object)
+            Edge.new(
+              metadata: definition,
+              vertex: call(definition.mapping_name, associated_object)
+            )
           }
         }
       end
+    end
+
+    class Edge
+      def initialize(metadata:, vertex:)
+        @metadata = metadata
+        @vertex = vertex
+      end
+
+      attr_reader :metadata, :vertex
     end
 
     class Vertex
@@ -54,8 +66,8 @@ module SequelMapper
         [self.class, object] == [other.class, other.object]
       end
 
-      def each_edge(&block)
-        edges.each(&block)
+      def each_vertex(&block)
+        edges.map(&:vertex).each(&block)
       end
     end
   end
