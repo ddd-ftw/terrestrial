@@ -8,8 +8,9 @@ RSpec.shared_context "object graph setup" do
   end
 
   def setup_circular_references_avoiding_stack_overflow
-    biscuits_post_comment.commenter = hansel
-    cat_biscuits_category.posts = [ biscuits_post ]
+    # biscuits_post_comment.commenter = hansel
+    # sleep_post_comment.commenter = jasper
+    # cat_biscuits_category.posts = [ biscuits_post ]
   end
 
   class PlainObject
@@ -85,6 +86,16 @@ RSpec.shared_context "object graph setup" do
     )
   }
 
+  let(:jasper) {
+    factories.fetch(:users).call(
+      id: "users/2",
+      first_name: "Jasper",
+      last_name: "Trickett",
+      email: "jasper@tricketts.org",
+      posts: [],
+    )
+  }
+
   let(:biscuits_post) {
     factories.fetch(:posts).call(
       id: "posts/1",
@@ -105,7 +116,9 @@ RSpec.shared_context "object graph setup" do
       id: "posts/2",
       subject: "Sleeping",
       body: "I do it three times purrr day",
-      comments: [],
+      comments: [
+        sleep_post_comment,
+      ],
       categories: [
         chilling_category,
       ],
@@ -117,6 +130,14 @@ RSpec.shared_context "object graph setup" do
     factories.fetch(:comments).call(
       id: "comments/1",
       body: "oh noes",
+      commenter: nil,
+    )
+  }
+
+  let(:sleep_post_comment) {
+    factories.fetch(:comments).call(
+      id: "comments/2",
+      body: "I'm tired just thinking about it",
       commenter: nil,
     )
   }
