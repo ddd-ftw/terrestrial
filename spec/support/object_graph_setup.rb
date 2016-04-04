@@ -62,6 +62,7 @@ RSpec.shared_context "object graph setup" do
   let(:default_serializer) {
     ->(fields) {
       ->(object) {
+        require "pry"; binding.pry # DEBUG @bestie
         Terrestrial::Serializer.new(fields, object).to_h
       }
     }
