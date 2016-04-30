@@ -1,10 +1,10 @@
 require "spec_helper"
-require "support/mapper_setup"
+require "support/object_store_setup"
 require "support/sequel_persistence_setup"
 require "support/have_persisted_matcher"
 
 RSpec.describe "Auto increment database ids" do
-  include_context "mapper setup"
+  include_context "object store setup"
   include_context "sequel persistence setup"
 
   before(:all) do
@@ -32,7 +32,7 @@ RSpec.describe "Auto increment database ids" do
   }
 
   it "persists the root node" do
-    user_mapper.save(user)
+    user_store.save(user)
 
     expect(datastore).to have_persisted(
       :auto_users,
@@ -46,7 +46,7 @@ RSpec.describe "Auto increment database ids" do
   end
 
   it "updates the object auto id" do
-    user_mapper.save(user)
+    user_store.save(user)
 
     expect(user.id.value).to match(Fixnum)
   end
@@ -68,7 +68,7 @@ RSpec.describe "Auto increment database ids" do
     }
 
     it "persists both objects" do
-      user_mapper.save(user)
+      user_store.save(user)
 
       expect(datastore).to have_persisted(
         :auto_users,
@@ -92,14 +92,14 @@ RSpec.describe "Auto increment database ids" do
     end
 
     it "backfills both ids" do
-      user_mapper.save(user)
+      user_store.save(user)
 
       expect(user.id.value).to match(Fixnum)
       expect(post.id.value).to match(Fixnum)
     end
 
     it "writes the foreign key" do
-      user_mapper.save(user)
+      user_store.save(user)
 
       expect(datastore[:auto_posts].first.fetch(:author_id)).to eq(user.id)
     end
