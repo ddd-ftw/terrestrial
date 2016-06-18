@@ -10,24 +10,24 @@ RSpec.describe "Graph traversal" do
   include_context "sequel persistence setup"
   include_context "seed data setup"
 
+  subject(:user_store) { object_store[:users] }
+
+  let(:user_query) {
+    user_store.where(id: "users/1")
+  }
+
+  let(:user) { user_query.first }
+
+  it "finds data via the storage adapter" do
+    expect(user_query.count).to eq(1)
+  end
+
+  it "maps the raw data from the store into domain objects" do
+    expect(user_query.first.id).to eq("users/1")
+    expect(user_query.first.first_name).to eq("Hansel")
+  end
+
   describe "associations" do
-    subject(:user_store) { object_store[:users] }
-
-    let(:user_query) {
-      user_store.where(id: "users/1")
-    }
-
-    let(:user) { user_query.first }
-
-    it "finds data via the storage adapter" do
-      expect(user_query.count).to eq(1)
-    end
-
-    it "maps the raw data from the store into domain objects" do
-      expect(user_query.first.id).to eq("users/1")
-      expect(user_query.first.first_name).to eq("Hansel")
-    end
-
     it "handles has_many associations" do
       post = user.posts.first
 
