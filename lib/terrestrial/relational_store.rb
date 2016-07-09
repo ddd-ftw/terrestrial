@@ -32,13 +32,31 @@ module Terrestrial
       self
     end
 
-    def where(query)
-      new_with_dataset(dataset.where(query))
+    def where(*criteria)
+      new_with_dataset(dataset.where(*criteria))
+    end
+
+    def distinct(*args, &block)
+      new_with_dataset(
+        dataset.distinct(*args, &block).qualify
+      )
     end
 
     def join(*args, &block)
       new_with_dataset(
         dataset.join(*args, &block).qualify
+      )
+    end
+
+    def limit(*args, &block)
+      new_with_dataset(
+        dataset.limit(*args, &block).qualify
+      )
+    end
+
+    def offset(*args, &block)
+      new_with_dataset(
+        dataset.offset(*args, &block).qualify
       )
     end
 
