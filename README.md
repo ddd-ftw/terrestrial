@@ -13,12 +13,16 @@ The aim is to provide a convenient way to query and persist graphs of Ruby objec
 In contrast to Ruby's many [active record](http://martinfowler.com/eaaCatalog/activeRecord.html) implementations, domain objects require no special inherited or mixed in behavior in order to be persisted.
 In fact Terrestrial has no specific requirements for domain objects at all.
 While there is a simple default, `.new` and `#to_h`, you may define arbitrary
-functions (per mapping) and expose no reader methods at all.
+functions (per mapping) and expose no reader methods at all. Read more about
+the [domain-persistence contract](https://github.com/bestie/terrestrial/blob/master/docs/domain_object_contract.md).
 
 ## Features
 
-* Absolute minimum coupling between domain and persistence
-* Persistence of plain or arbitrary objects
+* Zero coupling between domain and persistence
+* Persistence of plain / arbitrary objects
+* No mutation of domain objects
+* Support for multiple [bounded contexts](http://martinfowler.com/bliki/BoundedContext.html) and [aggregate roots](http://martinfowler.com/bliki/DDD_Aggregate.html)
+* [Identity map](https://en.wikipedia.org/wiki/Identity_map_pattern)
 * Associations (belongs_to, has_many, has_many_through)
 * Automatic 'convention over configuration' that is fully customizable
 * Lazy loading of associations
