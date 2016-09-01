@@ -29,7 +29,7 @@ Should you wish to enhance this data, every row is passed into the mapping's
 factory function where you have the opportunity to do arbitrary transformations
 before instantiating the domain object.
 
-\*see note on transforming row data
+See note on transforming row data.
 
 ## Validation
 
@@ -47,7 +47,7 @@ Should you wish to simply pass a column's key with a different parameter name
 then you can again lean on the factory function to transform the row's data
 before the domain object receives it.
 
-\*see note on transforming row data
+See note on transforming row data.
 
 ## Cascade deletion
 
@@ -71,7 +71,7 @@ There is absolutely nothing wrong with data added at time of persistence for
 auditing purposes but Terrestrial will make you actively decide whether this
 data should be available to the domain and what should be explicitly added.
 
-\* Transforming row data
+## Transforming row data
 
 Adding a custom factory method to transform row data before passing it to the
 domain layer is highly encouraged. However, ensure that for each custom factory
