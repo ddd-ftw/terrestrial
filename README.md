@@ -43,6 +43,16 @@ For [querying](http://sequel.jeremyevans.net/rdoc/files/doc/querying_rdoc.html),
 and creating your [database connection](http://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html)
 see the Sequel documentation.
 
+## A note on repositories
+
+Terrestrial is a mapper and does not provide a repository implementation.
+It is recommended that applications do not directly access the object stores and
+instead they are abstracted by repositories of your own design so that the API
+to your data is explicitly defined.
+
+There are of course [arguments against repositories](https://ayende.com/blog/3955/repository-is-the-new-singleton)
+so consider your needs.
+
 ## Usage
 
 Using Terrestrial is very different to using an active record pattern ORM.
