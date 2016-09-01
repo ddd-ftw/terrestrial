@@ -43,6 +43,26 @@ For [querying](http://sequel.jeremyevans.net/rdoc/files/doc/querying_rdoc.html),
 and creating your [database connection](http://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html)
 see the Sequel documentation.
 
+## Usage
+
+Using Terrestrial is very different to using an active record pattern ORM.
+
+Terrestrial provides an 'object store' with a simple interface that you can
+read objects from and write them back to almost as if you were interacting with
+a persistent `Hash` of all your objects, of course there are some differences
+and extra features.
+
+You are encouraged to access your objects as a graph, in the mathematical sense
+of connected nodes, starting with a root object which might be something like
+the current user or the blog post that is being viewed. The connected nodes
+are associations in the parlance of ActiveRecord.
+
+Once the necessary nodes (associations) are loaded any of these objects can be
+modified. Once modifications are complete the root node, and therefore the
+entire graph, is returned to the object store and is compiled into the most
+efficient set of database operations possible to persist the state. All
+unchanged objects or fields will be excluded.
+
 ## Getting started
 
 Please try this out, experiment, open issues and pull requests. Please read the
