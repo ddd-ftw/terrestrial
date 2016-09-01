@@ -2,10 +2,14 @@
 
 In no particular order
 
+* A simple repository implementation
+* Make the configuration contract explicit
 * User defined default settings for all mappings
-* Refactor, methods too big, objects missing
+* Further encourage DDD practice by restricting access to specified mappings
+* Refactor internals, methods too big, objects missing
 * Name things better
 * Better support swapping out DB for in memory datasets
+* Configurable dump and load pipelines
 
 ## Candidate features to consider
 * Column aliasing
