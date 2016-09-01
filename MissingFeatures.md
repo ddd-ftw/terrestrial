@@ -6,6 +6,22 @@ keep the library simple and encourage good practices in application code.
 Please open an issue if you feel like any of these features are essential or if
 you think you can contribute to a solution please open an issue to discuss.
 
+## The 'session'
+
+When people think of data mappers they often think of
+[Hibernate and its sessions](http://www.tutorialspoint.com/hibernate/hibernate_sessions.htm).
+Terrestrial has no session or abstraction on top of the database transaction,
+changes to a single object graph are persisted within a transaction to avoid
+local inconsistency should something go wrong.
+
+However, if several different graphs are separately loaded and modified they
+will each persist within their own transactions.
+
+Managing these multiple change sets along with what particular transaction
+isolation levels might be required is left as an exercise to the user. This may
+of course be as easy as wrapping your controller code in
+`DB.transaction do ...`
+
 ## Coercion
 
 Database supported types will be returned as expected, `Fixnum`, `DateTime`, `nil` etc.
