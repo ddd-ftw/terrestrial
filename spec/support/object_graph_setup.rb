@@ -47,33 +47,12 @@ RSpec.shared_context "object graph setup" do
   Comment ||= PlainObject.with_members(:id, :commenter, :body)
   Category ||= PlainObject.with_members(:id, :name, :posts)
 
-  let(:factories) {
-    {
-      users: User.method(:new),
-      posts: Post.method(:new),
-      comments: Comment.method(:new),
-      categories: Category.method(:new),
-      categories_to_posts: ->(x){x},
-      noop: ->(x){x},
-    }
-  }
+  let(:default_serializer) { Terrestrial.default_serializer }
 
-  let(:default_serializer) {
-    ->(fields) {
-      ->(object) {
-        Terrestrial::Serializer.new(fields, object).to_h
-      }
-    }
-  }
-
-  let(:null_serializer) {
-    ->(_fields) {
-      ->(x){x}
-    }
-  }
+  let(:null_serializer) { Terrestrial.null_serializer }
 
   let(:hansel) {
-    factories.fetch(:users).call(
+    User.new(
       id: "users/1",
       first_name: "Hansel",
       last_name: "Trickett",
@@ -86,7 +65,7 @@ RSpec.shared_context "object graph setup" do
   }
 
   let(:biscuits_post) {
-    factories.fetch(:posts).call(
+    Post.new(
       id: "posts/1",
       subject: "Biscuits",
       body: "I like them",
@@ -101,7 +80,7 @@ RSpec.shared_context "object graph setup" do
   }
 
   let(:sleep_post) {
-    factories.fetch(:posts).call(
+    Post.new(
       id: "posts/2",
       subject: "Sleeping",
       body: "I do it three times purrr day",
@@ -114,7 +93,7 @@ RSpec.shared_context "object graph setup" do
   }
 
   let(:biscuits_post_comment) {
-    factories.fetch(:comments).call(
+    Comment.new(
       id: "comments/1",
       body: "oh noes",
       commenter: nil,
@@ -122,7 +101,7 @@ RSpec.shared_context "object graph setup" do
   }
 
   let(:cat_biscuits_category) {
-    factories.fetch(:categories).call(
+    Category.new(
       id: "categories/1",
       name: "Cat biscuits",
       posts: [],
@@ -130,7 +109,7 @@ RSpec.shared_context "object graph setup" do
   }
 
   let(:chilling_category) {
-    factories.fetch(:categories).call(
+    Category.new(
       id: "categories/2",
       name: "Chillaxing",
       posts: [],

@@ -55,6 +55,89 @@ module Terrestrial
       ObjectStore.new(stores)
     end
 
+    def convert_primitive_config(primitive_config)
+      assoc_defaults = {
+        order: Terrestrial::QueryOrder.new(fields: [], direction: "ASC")
+      }
+
+      serializers = {
+        default: default_serializer,
+        null: null_serializer,
+      }
+
+
+      Hash[
+        primitive_config.map { |name, config|
+          fields = config.fetch(:fields) + config.fetch(:associations).keys
+
+          associations = config.fetch(:associations).map { |assoc_name, assoc_config|
+            [
+              assoc_name,
+              case assoc_config.fetch(:type)
+            when :one_to_many
+              Terrestrial::OneToManyAssociation.new(
+                **assoc_defaults.merge(
+                  assoc_config.dup.tap { |h| h.delete(:type) }
+                )
+              )
+            when :many_to_one
+              Terrestrial::ManyToOneAssociation.new(
+                assoc_config.dup.tap { |h| h.delete(:type) }
+              )
+            when :many_to_many
+              Terrestrial::ManyToManyAssociation.new(
+                **assoc_defaults
+                .merge(
+                  join_mapping_name: assoc_config.fetch(:join_mapping_name),
+                )
+                .merge(
+                  assoc_config.dup.tap { |h|
+                    h.delete(:type)
+                    h.delete(:join_namespace)
+                  }
+                )
+              )
+            else
+              raise "Association type not supported"
+            end
+            ]
+          }
+
+          [
+            name,
+            Terrestrial::RelationMapping.new(
+              name: name,
+              namespace: config.fetch(:namespace),
+              fields: config.fetch(:fields),
+              primary_key: config.fetch(:primary_key),
+              serializer: serializers.fetch(config.fetch(:serializer)).call(fields),
+              associations: Hash[associations],
+              factory: config.fetch(:factory) { null_factory },
+              subsets: Terrestrial::SubsetQueriesProxy.new(config.fetch(:subsets, {}))
+            )
+          ]
+        }
+      ]
+    end
+
+    def default_serializer
+      ->(fields) {
+        ->(object) {
+          Terrestrial::Serializer.new(fields, object).to_h
+        }
+      }
+    end
+
+    def null_serializer
+      ->(_fields) {
+        ->(x){x}
+      }
+    end
+
+    def null_factory
+      ->(x){x}
+    end
+
     module Private
       module_function
 

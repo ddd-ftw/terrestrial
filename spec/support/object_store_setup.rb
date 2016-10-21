@@ -21,66 +21,7 @@ RSpec.shared_context "object store setup" do
 
   let(:user_store) { object_store[:users] }
 
-  let(:mappings) {
-    Hash[
-      configs.map { |name, config|
-        fields = config.fetch(:fields) + config.fetch(:associations).keys
-
-        associations = config.fetch(:associations).map { |assoc_name, assoc_config|
-          [
-            assoc_name,
-            case assoc_config.fetch(:type)
-            when :one_to_many
-              Terrestrial::OneToManyAssociation.new(
-                **assoc_defaults.merge(
-                  assoc_config.dup.tap { |h| h.delete(:type) }
-                )
-              )
-            when :many_to_one
-              Terrestrial::ManyToOneAssociation.new(
-                assoc_config.dup.tap { |h| h.delete(:type) }
-              )
-            when :many_to_many
-              Terrestrial::ManyToManyAssociation.new(
-                **assoc_defaults
-                  .merge(
-                    join_mapping_name: assoc_config.fetch(:join_mapping_name),
-                  )
-                  .merge(
-                    assoc_config.dup.tap { |h|
-                      h.delete(:type)
-                      h.delete(:join_namespace)
-                    }
-                  )
-              )
-            else
-              raise "Association type not supported"
-            end
-          ]
-        }
-
-        [
-          name,
-          Terrestrial::RelationMapping.new(
-            name: name,
-            namespace: config.fetch(:namespace),
-            fields: config.fetch(:fields),
-            primary_key: config.fetch(:primary_key),
-            serializer: serializers.fetch(config.fetch(:serializer)).call(fields),
-            associations: Hash[associations],
-            factory: factories.fetch(name),
-            subsets: Terrestrial::SubsetQueriesProxy.new(config.fetch(:subsets, {}))
-          )
-        ]
-      }
-    ]
-  }
-
-  def assoc_defaults
-    {
-      order: Terrestrial::QueryOrder.new(fields: [], direction: "ASC")
-    }
-  end
+  let(:mappings) { Terrestrial.convert_primitive_config(configs) }
 
   let(:has_many_proxy_factory) {
     ->(query:, loader:, mapping_name:) {
@@ -103,13 +44,6 @@ RSpec.shared_context "object store setup" do
     }
   }
 
-  let(:serializers) {
-    {
-      default: default_serializer,
-      null: null_serializer,
-    }
-  }
-
   let(:configs) {
     {
       users: {
@@ -121,7 +55,7 @@ RSpec.shared_context "object store setup" do
           :last_name,
           :email,
         ],
-        factory: :user,
+        factory: User.method(:new),
         serializer: :default,
         associations: {
           posts: {
@@ -143,7 +77,7 @@ RSpec.shared_context "object store setup" do
           :body,
           :created_at,
         ],
-        factory: :post,
+        factory: Post.method(:new),
         serializer: :default,
         associations: {
           comments: {
@@ -173,7 +107,7 @@ RSpec.shared_context "object store setup" do
           :id,
           :body,
         ],
-        factory: :comment,
+        factory: Comment.method(:new),
         serializer: :default,
         associations: {
           commenter: {
@@ -193,7 +127,7 @@ RSpec.shared_context "object store setup" do
           :id,
           :name,
         ],
-        factory: :comment,
+        factory: Category.method(:new),
         serializer: :default,
         associations: {
           posts: {
